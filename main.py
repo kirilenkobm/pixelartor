@@ -76,13 +76,13 @@ def parse_args():
     app = argparse.ArgumentParser()
     app.add_argument("input_img", type=str, help="Input image.")
     app.add_argument("output_img", type=str, help="Output image.")
-    app.add_argument("--colors", "-c", type=int, default=8,
-                     help="Number of colors per channel. 8 as default.")
+    # app.add_argument("--colors", "-c", type=int, default=8,
+    #                  help="Number of colors per channel. 8 as default.")
     app.add_argument("--right_pecrentile", "-r", type=int, default=98,
-                     help="Contrast stretching, right percentile, 90 as default. "
+                     help="Contrast stretching, right percentile, 98 as default. "
                           "Int in range [left percentile..100]")
     app.add_argument("--left_pecrentile", "-l", type=int, default=4,
-                     help="Contrast stretching, left percentile, 2 as default. "
+                     help="Contrast stretching, left percentile, 4 as default. "
                           "Int in range [0..right_percentile]")
     app.add_argument("--magnify", "-m", action="store_true", dest="magnify",
                      help="Increase size of the pixels.")
@@ -114,8 +114,8 @@ def make_layout(args):
     h_starts = np.linspace(0, H, endpoint=False, num=H_pix)
     h_step = h_starts[1] - h_starts[0]
     # color bins
-    bins = np.linspace(0.0, 1.0, num=args.colors)
-    return W_pix, H_pix, w_starts, w_step, h_starts, h_step, bins
+    # bins = np.linspace(0.0, 1.0, num=args.colors)
+    return W_pix, H_pix, w_starts, w_step, h_starts, h_step
 
 
 def enhance_edges(im, args):
@@ -215,7 +215,7 @@ def main():
     eprint("Precomputing pixels, preprocessing the image...")
     pic = np.zeros((H, W, 3))  # init empty image with zeros
     # image markup
-    W_pix, H_pix, w_starts, w_step, h_starts, h_step, _ = make_layout(args)
+    W_pix, H_pix, w_starts, w_step, h_starts, h_step = make_layout(args)
     # contrast percentiles
     perc_left, perc_right = np.percentile(im, (args.left_pecrentile, args.right_pecrentile))
     im = exposure.rescale_intensity(im, in_range=(perc_left, perc_right))
