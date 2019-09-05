@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Pixelartor. Standalone tool."""
+"""Pixelartor."""
 import argparse
 from skimage import io
 from skimage import transform as tf
@@ -10,11 +10,14 @@ import numpy as np
 import sys
 
 # const
+__author__ = "Krlnk"
+__version__ = 0.1
 W, H = 800, 500
+# convert float to 4/2 bit slices
 four_bits = np.linspace(0.0, 1.0, num=9)
 two_bits = np.linspace(0.0, 1.0, num=5)
-GR_THR = 1.04
-sys.setrecursionlimit(50000)
+GR_THR = 1.04  # color "similarity" threshold
+sys.setrecursionlimit(50000)  # YES, I know
 
 
 class ImageGraph:
@@ -26,7 +29,6 @@ class ImageGraph:
         self.start_h = h
         self.w_border = arr.shape[0]
         self.h_border = arr.shape[1]
-        self.parentship = {}
         self.checked = {(w, h)}
         self.grad = {(w, h)}
 
@@ -45,8 +47,6 @@ class ImageGraph:
                     continue  # checked in prev generation
                 elif (w + i, h + j) in self.checked:
                     continue  # checked in this generation
-                # elif (w + i, h + j) == self.parentship.get((w, h)):
-                #     continue  # point to the parent
                 else:
                     moves.append((w + i, h + j))
         return moves
@@ -57,7 +57,6 @@ class ImageGraph:
         moves = self.get_moves(w, h)
         color_init = self.arr[w, h]
         for move in moves:
-            self.parentship[move] = (w, h)
             self.checked.add(move)
             color_move = self.arr[move[0], move[1]]
             if is_grad(color_init, color_move):
@@ -104,11 +103,11 @@ def eprint(msg, end="\n"):
     sys.stderr.write(msg + end)
 
 
-def make_layout(args):
+def make_layout(magnify):
     """Define coordinates of blocks."""
     # define start points / step size
-    W_pix = 160 if not args.magnify else 80
-    H_pix = 100 if not args.magnify else 50
+    W_pix = 160 if not magnify else 80
+    H_pix = 100 if not magnify else 50
     w_starts = np.linspace(0, W, endpoint=False, num=W_pix)
     w_step = w_starts[1] - w_starts[0]
     h_starts = np.linspace(0, H, endpoint=False, num=H_pix)
@@ -118,10 +117,10 @@ def make_layout(args):
     return W_pix, H_pix, w_starts, w_step, h_starts, h_step
 
 
-def enhance_edges(im, args):
+def enhance_edges(im, edges_sigma, egdes_blur_sigma):
     """Paint edges black."""
-    edges = feature.canny(im[:, :, 1], sigma=args.edges_sigma)
-    edges = filters.gaussian(edges, sigma=args.egdes_blur_sigma)
+    edges = feature.canny(im[:, :, 1], sigma=edges_sigma)
+    edges = filters.gaussian(edges, sigma=egdes_blur_sigma)
     edges = edges.astype(float) * 2.8
     im[:, :, 0] -= edges
     im[:, :, 1] -= edges
@@ -154,9 +153,8 @@ def is_grad(color_1, color_2):
     return True
 
 
-def detect_gradients(im, w_starts, h_starts, w_step, h_step):
-    """Make gradient map for the image."""
-    grad_map = np.zeros((len(w_starts), len(h_starts)))
+def get_average_colors(im, w_starts, h_starts, w_step, h_step):
+    """Return average colors."""
     ave_colors = np.zeros((len(w_starts), len(h_starts), 3))
     # extract colors for each node
     for w_num, w_startf in enumerate(w_starts):
@@ -168,10 +166,13 @@ def detect_gradients(im, w_starts, h_starts, w_step, h_step):
             grun_mean = im[h_start: h_end, w_start: w_end, 1].mean()
             blau_mean = im[h_start: h_end, w_start: w_end, 2].mean()
             ave_colors[w_num][h_num] = [rot_mean, grun_mean, blau_mean]
+    return ave_colors
 
-    # init values
+
+def make_gradient_map(ave_colors, w_starts, h_starts):
+    """Make gradient map for the image."""
     mapped = set()
-
+    grad_map = np.zeros((len(w_starts), len(h_starts)))
     # start graph
     w_size, h_size = len(w_starts), len(h_starts)
     eprint("Find gradiends...")
@@ -192,7 +193,7 @@ def detect_gradients(im, w_starts, h_starts, w_step, h_step):
                 grad_map[elem[0], elem[1]] = cluster
         eprint("Row {0}/{1}".format(w, w_size), end="\r")
 
-    return ave_colors, grad_map, cluster
+    return grad_map, cluster
 
 
 def colors_average(colors):
@@ -207,21 +208,22 @@ def colors_average(colors):
     return [red_ave, green_ave, blue_ave]
 
 
-def main():
-    """Main func."""
-    args = parse_args()
-    # im is an W x H x 3 array of 0..1
-    im = tf.resize(io.imread(args.input_img), (H, W))
+def pixel(im, magn=False, lp=4, rp=98, edges_sigma=3, egdes_blur_sigma=0.3):
+    """Pixelator itself."""
     eprint("Precomputing pixels, preprocessing the image...")
+    im = tf.resize(im, (H, W))
     pic = np.zeros((H, W, 3))  # init empty image with zeros
     # image markup
-    W_pix, H_pix, w_starts, w_step, h_starts, h_step = make_layout(args)
+    W_pix, H_pix, w_starts, w_step, h_starts, h_step = make_layout(magn)
     # contrast percentiles
-    perc_left, perc_right = np.percentile(im, (args.left_pecrentile, args.right_pecrentile))
+    perc_left, perc_right = np.percentile(im, (lp, rp))
     im = exposure.rescale_intensity(im, in_range=(perc_left, perc_right))
     # find edges
-    im = enhance_edges(im, args)
-    ave_colors, grad_map, clusters_num = detect_gradients(im, w_starts, h_starts, w_step, h_step)
+    im = enhance_edges(im, edges_sigma, egdes_blur_sigma)
+    # ave_colors, grad_map, clusters_num = detect_gradients(im, w_starts, h_starts, w_step, h_step)
+    ave_colors = get_average_colors(im, w_starts, h_starts, w_step, h_step)
+    grad_map, clusters_num = make_gradient_map(ave_colors, w_starts, h_starts)
+
     for clust_num in range(1, clusters_num + 1):
         colors = ave_colors[grad_map == clust_num]
         cluster_ave = colors_average(colors)
@@ -231,29 +233,35 @@ def main():
     eprint("Assign colors...")
     for w_num, w_startf in enumerate(w_starts):
         for h_num, h_startf in enumerate(h_starts):
-            darker = 0.6 if h_num % 2 == 0 and args.interlacing else 1.0
             # define the coords of the square
             w_start = int(w_startf)
             h_start = int(h_startf)
             w_end = int(w_start + w_step)
             h_end = int(h_start + h_step)
 
-            # ... and the color of this "pixel"
-            # rot_mean = im[h_start: h_end, w_start: w_end, 0].mean()
-            # grun_mean = im[h_start: h_end, w_start: w_end, 1].mean()
-            # blau_mean = im[h_start: h_end, w_start: w_end, 2].mean()
-            # digitized = np.digitize([rot_mean, grun_mean, blau_mean], bins=bins)
+            # find the closest color
             color = ave_colors[w_num, h_num]
             digitized = convert_to_256(color[0], color[1], color[2])
-            # pic[h_start: h_end, w_start: w_end, 0] = bins[digitized[0] - 1] * darker
-            # pic[h_start: h_end, w_start: w_end, 1] = bins[digitized[1] - 1] * darker
-            # pic[h_start: h_end, w_start: w_end, 2] = bins[digitized[2] - 1] * darker
-            pic[h_start: h_end, w_start: w_end, 0] = digitized[0] * darker
-            pic[h_start: h_end, w_start: w_end, 1] = digitized[1] * darker
-            pic[h_start: h_end, w_start: w_end, 2] = digitized[2] * darker
 
+            pic[h_start: h_end, w_start: w_end, 0] = digitized[0]
+            pic[h_start: h_end, w_start: w_end, 1] = digitized[1]
+            pic[h_start: h_end, w_start: w_end, 2] = digitized[2]
+    return pic
+
+
+
+def main():
+    """Entry point."""
+    args = parse_args()
+    # im is an W x H x 3 array of 0..1
+    im = io.imread(args.input_img)
+    pix = pixel(im, args.magnify,
+                args.left_pecrentile,
+                args.right_pecrentile,
+                args.edges_sigma, 
+                args.egdes_blur_sigma)
     # save result
-    io.imsave(args.output_img, pic)
+    io.imsave(args.output_img, pix)
     eprint("Done")
     sys.exit(0)
 
