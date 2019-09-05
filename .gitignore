@@ -1,2 +1,6 @@
+# IDE related
 .idea/
-test/
+.DS_Store
+
+# python stuff
+__pycache__/

@@ -1,4 +1,6 @@
-Pixelartor ¯\_(ツ)_/¯
+# Pixelartor ¯\_(ツ)_/¯
+
+## Usage
 
 usage: main.py [-h] [--right_pecrentile RIGHT_PECRENTILE]
                [--left_pecrentile LEFT_PECRENTILE] [--magnify] [--interlacing]
@@ -24,3 +26,13 @@ optional arguments:
                         Sigma for canny filter.
   --egdes_blur_sigma EGDES_BLUR_SIGMA, -s EGDES_BLUR_SIGMA
                         Gaussian filter sigma.
+
+## What is it for
+
+Before:
+
+![alt text](examples/before_1.jpg  "Before 1")
+
+After:
+
+![alt text](examples/after_1.jpg "After 1")
