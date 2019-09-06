@@ -46,3 +46,13 @@ Before:
 After:
 
 ![alt text](examples/after_2.jpg "After 2")
+
+## Gallery
+
+![alt text](examples/gal_1.jpg  "Gallery 1")
+
+![alt text](examples/gal_2.jpg  "Gallery 2")
+
+![alt text](examples/gal_3.jpg  "Gallery 3")
+
+![alt text](examples/gal_4.jpg  "Gallery 4")
