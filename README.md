@@ -50,14 +50,6 @@ Before & After
 
 ![alt text 1](examples/before_after_2.jpg  "Before 1")
 
-Before:
-
-![alt text](examples/before_2.jpg  "Before 2")
-
-After:
-
-![alt text](examples/after_2.jpg "After 2")
-
 ## Examples
 
 ![alt text](examples/gal_1.jpg  "Gallery 1")
