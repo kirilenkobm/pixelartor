@@ -10,6 +10,9 @@ First, install python libraries listed in the requirements.txt
 pip3 install -r requirements.txt
 ```
 
+For video processing you also need moviepy library.
+This direction was not tested and developed properly yet.
+
 Then call main.py:
 
 ```txt
