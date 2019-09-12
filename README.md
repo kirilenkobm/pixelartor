@@ -42,6 +42,8 @@ optional arguments:
                         Gaussian filter sigma.
 ```
 
+Default parameters are fine in most cases.
+
 ## What is it for
 
 Before & After
