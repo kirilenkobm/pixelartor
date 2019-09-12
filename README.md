@@ -60,6 +60,6 @@ Before & After
 
 ![alt text](examples/gal_4.jpg  "Gallery 4")
 
-![alt text](examples/gal_4.jpg  "Gallery 4")
+![alt text](examples/gal_5.jpg  "Gallery 4")
 
-![alt text](examples/gal_4.jpg  "Gallery 4")
+![alt text](examples/gal_6.jpg  "Gallery 4")
