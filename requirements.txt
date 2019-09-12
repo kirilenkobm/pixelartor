@@ -1,2 +1,4 @@
 skimage
 numpy
+flask
+werkzeug
