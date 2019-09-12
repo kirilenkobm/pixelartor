@@ -136,11 +136,9 @@ def convert_to_256(red, green, blue):
     green_index = np.digitize(green, bins=four_bits)
     blue_index = np.digitize(blue, bins=two_bits)
     # get colors | compensate left-sided
-    # print(red_index, green_index, blue_index)
     red_color = four_bits[red_index - 1]
     green_color = four_bits[green_index - 1]
     blue_color = two_bits[blue_index - 1]
-    # print(red_color, green_color, blue_color)
     return (red_color, green_color, blue_color)
 
 
@@ -179,7 +177,8 @@ def make_gradient_map(ave_colors, w_starts, h_starts):
     cluster = 0
     for w in range(w_size):
         for h in range(h_size):
-            if (w, h) in mapped:  # we checked it previously --> skip
+            if (w, h) in mapped: 
+                # we checked it previously --> skip
                 continue
             mapped.add((w, h))
             ig = ImageGraph(ave_colors, w, h, mapped)
@@ -192,7 +191,6 @@ def make_gradient_map(ave_colors, w_starts, h_starts):
             for elem in new_mapped:
                 grad_map[elem[0], elem[1]] = cluster
         eprint("Row {0}/{1}".format(w, w_size), end="\r")
-
     return grad_map, cluster
 
 
@@ -213,14 +211,14 @@ def pixel(im, magn=False, lp=4, rp=98, edges_sigma=3, egdes_blur_sigma=0.3):
     eprint("Precomputing pixels, preprocessing the image...")
     im = tf.resize(im, (H, W))
     pic = np.zeros((H, W, 3))  # init empty image with zeros
-    # image markup
-    W_pix, H_pix, w_starts, w_step, h_starts, h_step = make_layout(magn)
+    _, _, w_starts, w_step, h_starts, h_step = make_layout(magn)
+
     # contrast percentiles
     perc_left, perc_right = np.percentile(im, (lp, rp))
     im = exposure.rescale_intensity(im, in_range=(perc_left, perc_right))
+
     # find edges
     im = enhance_edges(im, edges_sigma, egdes_blur_sigma)
-    # ave_colors, grad_map, clusters_num = detect_gradients(im, w_starts, h_starts, w_step, h_step)
     ave_colors = get_average_colors(im, w_starts, h_starts, w_step, h_step)
     grad_map, clusters_num = make_gradient_map(ave_colors, w_starts, h_starts)
 
@@ -230,7 +228,7 @@ def pixel(im, magn=False, lp=4, rp=98, edges_sigma=3, egdes_blur_sigma=0.3):
         ave_colors[grad_map == clust_num] = cluster_ave
 
     # main loop \ "pixel" by "pixel"
-    eprint("Assign colors...")
+    eprint("Assigning colors...")
     for w_num, w_startf in enumerate(w_starts):
         for h_num, h_startf in enumerate(h_starts):
             # define the coords of the square
@@ -243,6 +241,7 @@ def pixel(im, magn=False, lp=4, rp=98, edges_sigma=3, egdes_blur_sigma=0.3):
             color = ave_colors[w_num, h_num]
             digitized = convert_to_256(color[0], color[1], color[2])
 
+            # and apply it
             pic[h_start: h_end, w_start: w_end, 0] = digitized[0]
             pic[h_start: h_end, w_start: w_end, 1] = digitized[1]
             pic[h_start: h_end, w_start: w_end, 2] = digitized[2]
