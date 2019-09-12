@@ -4,3 +4,8 @@
 
 # python stuff
 __pycache__/
+
+# my stuff
+batch*/
+input/
+output/
