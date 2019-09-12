@@ -1,5 +1,7 @@
 # Pixelartor
 
+![alt text](static/logo.JPEG  "Gallery 1")
+
 A tool to produce pixel-art.
 
 ## Usage
@@ -58,9 +60,9 @@ Then open <http://0.0.0.0:5000> in a browser.
 
 Before & After
 
-![alt text 1](examples/before_after_1.jpg  "Before 1")
+![alt text](examples/before_after_1.jpg  "Before 1")
 
-![alt text 1](examples/before_after_2.jpg  "Before 1")
+![alt text](examples/before_after_2.jpg  "Before 1")
 
 ## Examples
 
