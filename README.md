@@ -1,6 +1,16 @@
-# Pixelartor ¯\_(ツ)_/¯
+# Pixelartor
+
+A tool to produce pixel-art.
 
 ## Usage
+
+First, install python libraries listed in the requirements.txt
+
+```shell
+pip3 install -r requirements.txt
+```
+
+Then call main.py:
 
 ```txt
 usage: main.py [-h] [--right_pecrentile RIGHT_PECRENTILE]
