@@ -44,13 +44,11 @@ optional arguments:
 
 ## What is it for
 
-Before:
+Before & After
 
-![alt text](examples/before_1.jpg  "Before 1")
+![alt text 1](examples/before_after_1.jpg  "Before 1")
 
-After:
-
-![alt text](examples/after_1.jpg "After 1")
+![alt text 1](examples/before_after_2.jpg  "Before 1")
 
 Before:
 
@@ -60,12 +58,16 @@ After:
 
 ![alt text](examples/after_2.jpg "After 2")
 
-## Gallery
+## Examples
 
 ![alt text](examples/gal_1.jpg  "Gallery 1")
 
 ![alt text](examples/gal_2.jpg  "Gallery 2")
 
 ![alt text](examples/gal_3.jpg  "Gallery 3")
+
+![alt text](examples/gal_4.jpg  "Gallery 4")
+
+![alt text](examples/gal_4.jpg  "Gallery 4")
 
 ![alt text](examples/gal_4.jpg  "Gallery 4")
