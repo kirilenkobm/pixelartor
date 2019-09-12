@@ -4,7 +4,7 @@ A tool to produce pixel-art.
 
 ## Usage
 
-First, install python libraries listed in the requirements.txt
+First of all, install python libraries listed in the requirements.txt
 
 ```shell
 pip3 install -r requirements.txt
@@ -13,7 +13,9 @@ pip3 install -r requirements.txt
 For video processing you also need moviepy library.
 This direction was not tested and developed properly yet.
 
-Then call main.py:
+You can use the tool with both command line and web-interfaces.
+
+To call it with CLI call main.py:
 
 ```txt
 usage: main.py [-h] [--right_pecrentile RIGHT_PECRENTILE]
@@ -43,6 +45,14 @@ optional arguments:
 ```
 
 Default parameters are fine in most cases.
+
+To start the web-interface just call:
+
+```shell
+./runserver.py
+```
+
+Then open <http://0.0.0.0:5000> in a browser.
 
 ## What is it for
 

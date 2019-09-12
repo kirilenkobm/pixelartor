@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pixelartor</title>
+      <style>
+        body {background-color: #ffffff;}
+        input.t4 {
+        background: -webkit-gradient(linear, 0 0, 0  100%, from(#999999), to(#aaaaaa),
+        color-stop(0.6, #777), color-stop(0.6,  #aaaaaa));
+        color: #fff;
+        border: 1px solid  #555;
+       }
+  </style>
+</head>
+
+<body>
+    <div class="container" align="center">
+                <!--<h1><img src="{{url_for('static', filename='logo.png')}}" alt="Logo" width="500" height="106" align="center"></h1>-->
+                <h1 style="font-size:60px;color:#bbbbbb" align="center">PIXELARTOR</h1>
+                <form action="" method=post enctype=multipart/form-data>
+                    <p style="color:#bbbbbb;"><br> INPUT FILE: <br></p>
+
+                        <input type=file name=file class="t4">
+                        <input type="submit" name="okbuttan" value="PIXELATE" class="t4">
+                </form>
+
+                <br />
+    </div>
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+<h6 style="font-size:12px;color:#bbbbbb" align="center">Bogdan Kirilenko, 2019<br>No rights reserved</h6>
+
+</body>
+</html>

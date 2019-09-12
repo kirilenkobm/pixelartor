@@ -9,3 +9,4 @@ __pycache__/
 batch*/
 input/
 output/
+static/*.jpg
