@@ -26,10 +26,13 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-def apply_pixel(in_pic, out_pic):
+def apply_pixel(in_pic, out_pic, params):
     """Apply pixel func to pic."""
+    print(params)
     im = io.imread(in_pic)
-    pix = pixel(im)
+    pix = pixel(im, magn=params["m"],
+                lp=params["l_p"],
+                rp=params["r_p"])
     io.imsave(out_pic, pix)
 
 
@@ -44,10 +47,16 @@ def upload_file():
             in_file = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(in_file)
 
+            params = {}
+            params["l_p"] = int(request.form["left_percentile"])
+            params["r_p"] = int(request.form["right_percentile"])
+            params["m"] = True if request.form.getlist("magnify") else False
+            # params["i"] = True if request.form.getlist("interlacing") else False
+            print(params)
             output_filename = "{}.jpg".format(id_gen(12))
             out_file = os.path.join(app.config["UPLOAD_FOLDER"], output_filename)
     
-            apply_pixel(in_file, out_file)
+            apply_pixel(in_file, out_file, params)
             # save in the same folder
             # io.imsave(in_file, glim)
             os.remove(in_file)
