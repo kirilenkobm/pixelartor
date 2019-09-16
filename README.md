@@ -55,6 +55,7 @@ To start the web-interface just call:
 ```
 
 Then open <http://0.0.0.0:5000> in a browser.
+Or, try <http://localhost:5000/> if the previous link doesn't work.
 
 ## What is it for
 

@@ -1,6 +1,7 @@
 # IDE related
 .idea/
 .DS_Store
+.vs/
 
 # python stuff
 __pycache__/
